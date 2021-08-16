@@ -23,7 +23,7 @@ namespace DotnetRS232cLAN
                 Environment.Exit(1);
             }
 
-            var hostname = args[0]; 
+            var hostname = args[0];
             var port = Convert.ToInt32(args[1]);
 
             while (true)

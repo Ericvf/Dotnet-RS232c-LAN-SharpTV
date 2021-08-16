@@ -78,7 +78,7 @@ namespace DotnetRS232cLAN
                 writer.WriteLine(input);
 
                 output = await ReadOutput(netstream, reader);
-                logger.LogInformation(output); 
+                logger.LogInformation(output);
             }
         }
 
@@ -106,12 +106,19 @@ namespace DotnetRS232cLAN
 
         private string Pad(int value) => Convert.ToString(value).PadLeft(4, '0');
 
-        private Task<string> SendCommandAndGetResponse(string command)
+        private async Task<string> SendCommandAndGetResponse(string command)
         {
             logger.LogInformation("SendCommandAndGetResponse", command);
 
             writer!.WriteLine(command);
-            return ReadOutput(netstream!, reader!);
+            var output = await ReadOutput(netstream!, reader!);
+
+            if (output == "WAIT\r\n")
+            {
+                output = await ReadOutput(netstream!, reader!);
+            }
+
+            return output;
         }
 
         private async Task<string> ReadOutput(NetworkStream netstream, StreamReader reader)
@@ -119,6 +126,8 @@ namespace DotnetRS232cLAN
             await Task.Delay(timeout);
 
             var stringBuilder = new StringBuilder();
+
+            while (!netstream.DataAvailable);
             while (netstream.DataAvailable)
             {
                 stringBuilder.Append((char)netstream.ReadByte());
