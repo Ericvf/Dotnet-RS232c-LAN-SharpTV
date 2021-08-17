@@ -6,11 +6,11 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DotnetRS232cLAN
+namespace RS232cTcpSharp
 {
-    public sealed class RS232cTcpClient : IRS232cTcpClient, IDisposable
+    public sealed class RS232cTcpSharpClient : IRS232cTcpSharpClient, IDisposable
     {
-        private readonly ILogger<RS232cTcpClient> logger;
+        private readonly ILogger<RS232cTcpSharpClient> logger;
         private readonly Dictionary<Commands, string> _commandTexts = new Dictionary<Commands, string>()
         {
             { Commands.PowerControl, "POWR" },
@@ -41,7 +41,7 @@ namespace DotnetRS232cLAN
         private StreamWriter? writer;
         private StreamReader? reader;
 
-        public RS232cTcpClient(ILogger<RS232cTcpClient> logger)
+        public RS232cTcpSharpClient(ILogger<RS232cTcpSharpClient> logger)
         {
             this.logger = logger;
         }

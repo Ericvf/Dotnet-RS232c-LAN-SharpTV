@@ -1,4 +1,4 @@
-﻿namespace DotnetRS232cLAN
+﻿namespace RS232cTcpSharp
 {
     public enum Commands
     {

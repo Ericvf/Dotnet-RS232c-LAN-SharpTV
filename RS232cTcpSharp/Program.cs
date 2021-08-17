@@ -2,7 +2,7 @@
 using Microsoft.Extensions.Logging;
 using System.Threading.Tasks;
 
-namespace DotnetRS232cLAN
+namespace RS232cTcpSharp
 {
     class Program
     {
@@ -17,7 +17,7 @@ namespace DotnetRS232cLAN
             => new ServiceCollection()
                 .AddLogging(logging => logging.AddDebug())
                 .AddSingleton<App>()
-                .AddSingleton<IRS232cTcpClient, RS232cTcpClient>()
+                .AddSingleton<IRS232cTcpSharpClient, RS232cTcpSharpClient>()
                 .BuildServiceProvider();
     }
 }

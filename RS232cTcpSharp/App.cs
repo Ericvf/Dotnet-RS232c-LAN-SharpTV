@@ -1,25 +1,25 @@
 ﻿using System;
 using System.Threading.Tasks;
 
-namespace DotnetRS232cLAN
+namespace RS232cTcpSharp
 {
     public class App
     {
-        private readonly IRS232cTcpClient rs232cClient;
+        private readonly IRS232cTcpSharpClient rs232cClient;
 
-        public App(IRS232cTcpClient rs232CTcpClient)
+        public App(IRS232cTcpSharpClient rs232CTcpClient)
         {
             this.rs232cClient = rs232CTcpClient;
         }
 
         public async Task RunAsync(string[] args)
         {
-            Console.WriteLine("DotnetRS232cLAN started");
+            Console.WriteLine("RS232cTcpSharp started");
 
             if (args.Length != 2)
             {
                 Console.WriteLine("Please provide a hostname/ipaddress and port.");
-                Console.WriteLine("e.g. `DotnetRS232cLAN.exe 192.168.1.3 10008`");
+                Console.WriteLine("e.g. `RS232cTcpSharp.exe 192.168.1.3 10008`");
                 Environment.Exit(1);
             }
 

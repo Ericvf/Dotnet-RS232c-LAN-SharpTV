@@ -1,8 +1,8 @@
 ﻿using System.Threading.Tasks;
 
-namespace DotnetRS232cLAN
+namespace RS232cTcpSharp
 {
-    public interface IRS232cTcpClient
+    public interface IRS232cTcpSharpClient
     {
         Task<string> Get(string command);
 
