@@ -1,5 +1,6 @@
 # Dotnet-RS232c-lan
-Control computer monitors and TV's using RS232 commands over LAN. 
+Control computer monitors and TV's using RS232 commands over LAN. This code specifically works for a Sharp HW431 and might need adjustment for other Sharp TV's. 
+Other TV brands or completely different devices with RS232 over ethernet are most likely *_not_* going to work.
 
 ## Commands
 - PowerControl
