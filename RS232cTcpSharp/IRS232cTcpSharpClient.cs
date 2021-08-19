@@ -8,6 +8,8 @@ namespace RS232cTcpSharp
 
         Task<string> Get(Commands command);
 
+        Task<string> Set(string command, string value);
+
         Task<string> Set(Commands command, int value);
 
         bool IsConnected();

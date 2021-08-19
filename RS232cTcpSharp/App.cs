@@ -25,6 +25,7 @@ namespace RS232cTcpSharp
 
             var hostname = args[0];
             var port = Convert.ToInt32(args[1]);
+            var response = default(string);
 
             while (true)
             {
@@ -60,8 +61,15 @@ namespace RS232cTcpSharp
                     }
                     else if (!string.IsNullOrEmpty(command))
                     {
-                        // Evaluate
-                        var response = await rs232cClient.Get(command!);
+                        var subCmd = command.Split(' ');
+                        if (subCmd.Length == 2)
+                        {
+                            response = await rs232cClient.Set(subCmd[0], subCmd[1]);
+                        }
+                        else
+                        {
+                            response = await rs232cClient.Get(command!);
+                        }
 
                         // Print
                         Console.WriteLine(response);

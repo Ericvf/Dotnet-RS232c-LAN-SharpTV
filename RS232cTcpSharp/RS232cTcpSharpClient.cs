@@ -94,17 +94,20 @@ namespace RS232cTcpSharp
             return SendCommandAndGetResponse($"{commandString}????");
         }
 
+        public Task<string> Set(string command, string value)
+            => SendCommandAndGetResponse($"{command}{Pad(value)}");
+
         public Task<string> Set(Commands command, int value)
         {
             var commandString = GetCommandString(command);
-            return SendCommandAndGetResponse($"{commandString}{Pad(value)}");
+            return SendCommandAndGetResponse($"{commandString}{Pad(value.ToString())}");
         }
 
         private string GetCommandString(Commands command) => _commandTexts[command];
 
         public Task<string> Get(string command) => SendCommandAndGetResponse(command);
 
-        private string Pad(int value) => Convert.ToString(value).PadLeft(4, '0');
+        private string Pad(string value) => value.PadLeft(4, '0');
 
         private async Task<string> SendCommandAndGetResponse(string command)
         {
@@ -142,5 +145,6 @@ namespace RS232cTcpSharp
         {
             netstream?.Dispose();
         }
+
     }
 }
