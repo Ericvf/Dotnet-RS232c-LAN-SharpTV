@@ -33,19 +33,19 @@ namespace RS232cTcpSharp
                 await rs232cClient.Start(hostname, port);
 
                 // Execute some default commands
-                var model = await rs232cClient.Get(Commands.Model);
+                var model = rs232cClient.Get(Commands.Model);
                 Console.Write($"Model: {model}");
 
-                var serialNo = await rs232cClient.Get(Commands.SerialNo);
+                var serialNo = rs232cClient.Get(Commands.SerialNo);
                 Console.Write($"SerialNo: {serialNo}");
 
-                var powerControl = await rs232cClient.Get(Commands.PowerControl);
+                var powerControl = rs232cClient.Get(Commands.PowerControl);
                 Console.Write($"Power control: {powerControl}");
 
-                var inputSelection = await rs232cClient.Get(Commands.InputModeSelection);
+                var inputSelection = rs232cClient.Get(Commands.InputModeSelection);
                 Console.Write($"Input Selection Mode: {inputSelection}");
 
-                var brightness = await rs232cClient.Get(Commands.Brightness);
+                var brightness = rs232cClient.Get(Commands.Brightness);
                 Console.Write($"Brightness: {brightness}");
 
                 // REPL
@@ -64,11 +64,11 @@ namespace RS232cTcpSharp
                         var subCmd = command.Split(' ');
                         if (subCmd.Length == 2)
                         {
-                            response = await rs232cClient.Set(subCmd[0], subCmd[1]);
+                            response = rs232cClient.Set(subCmd[0], subCmd[1]);
                         }
                         else
                         {
-                            response = await rs232cClient.Get(command!);
+                            response = rs232cClient.Get(command!);
                         }
 
                         // Print
@@ -76,7 +76,7 @@ namespace RS232cTcpSharp
                     }
                 }
 
-                await rs232cClient.Stop();
+                rs232cClient.Stop();
             }
         }
     }

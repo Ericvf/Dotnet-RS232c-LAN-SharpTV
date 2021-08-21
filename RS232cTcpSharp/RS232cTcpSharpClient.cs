@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Net.Sockets;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace RS232cTcpSharp
@@ -37,9 +38,8 @@ namespace RS232cTcpSharp
         private const int timeout = 200;
 
         private TcpClient? tcpClient;
-        private NetworkStream? netstream;
+        private NetworkStream? networkStream;
         private StreamWriter? writer;
-        private StreamReader? reader;
 
         public RS232cTcpSharpClient(ILogger<RS232cTcpSharpClient> logger)
         {
@@ -52,23 +52,22 @@ namespace RS232cTcpSharp
 
             await tcpClient.ConnectAsync(ipAddress, port);
 
-            netstream = tcpClient.GetStream();
-            writer = new StreamWriter(netstream);
-            reader = new StreamReader(netstream);
+            networkStream = tcpClient.GetStream();
+            writer = new StreamWriter(networkStream);
 
             writer.AutoFlush = true;
-            netstream.ReadTimeout = 500;
+            networkStream.ReadTimeout = 500;
 
             string input, output;
 
-            output = await ReadOutput(netstream, reader);
+            output = ReadOutput();
             logger.LogInformation(output);
 
             if (output == "Login:")
             {
                 input = string.Empty;
                 writer.WriteLine(input);
-                output = await ReadOutput(netstream, reader);
+                output = ReadOutput();
                 logger.LogInformation(output);
             }
 
@@ -77,27 +76,27 @@ namespace RS232cTcpSharp
                 input = string.Empty;
                 writer.WriteLine(input);
 
-                output = await ReadOutput(netstream, reader);
+                output = ReadOutput();
                 logger.LogInformation(output);
             }
         }
 
-        public async Task Stop()
+        public void Stop()
         {
-            await SendCommandAndGetResponse("BYE");
-            netstream?.Dispose();
+            SendCommandAndGetResponse("BYE");
+            networkStream?.Dispose();
         }
 
-        public Task<string> Get(Commands command)
+        public string Get(Commands command)
         {
             var commandString = GetCommandString(command);
             return SendCommandAndGetResponse($"{commandString}????");
         }
 
-        public Task<string> Set(string command, string value)
+        public string Set(string command, string value)
             => SendCommandAndGetResponse($"{command}{Pad(value)}");
 
-        public Task<string> Set(Commands command, int value)
+        public string Set(Commands command, int value)
         {
             var commandString = GetCommandString(command);
             return SendCommandAndGetResponse($"{commandString}{Pad(value.ToString())}");
@@ -105,35 +104,36 @@ namespace RS232cTcpSharp
 
         private string GetCommandString(Commands command) => _commandTexts[command];
 
-        public Task<string> Get(string command) => SendCommandAndGetResponse(command);
+        public string Get(string command) => SendCommandAndGetResponse(command);
 
         private string Pad(string value) => value.PadLeft(4, '0');
 
-        private async Task<string> SendCommandAndGetResponse(string command)
+        private string SendCommandAndGetResponse(string command)
         {
             logger.LogInformation("SendCommandAndGetResponse", command);
 
             writer!.WriteLine(command);
-            var output = await ReadOutput(netstream!, reader!);
+            var output = ReadOutput();
 
             if (output == "WAIT\r\n")
             {
-                output = await ReadOutput(netstream!, reader!);
+                output = ReadOutput();
             }
 
             return output;
         }
 
-        private async Task<string> ReadOutput(NetworkStream netstream, StreamReader reader)
+        private string ReadOutput()
         {
-            await Task.Delay(timeout);
-
             var stringBuilder = new StringBuilder();
 
-            while (!netstream.DataAvailable);
-            while (netstream.DataAvailable)
+            using var cancellationToken = new CancellationTokenSource();
+            cancellationToken.CancelAfter(timeout);
+
+            while (!networkStream.DataAvailable && !cancellationToken.IsCancellationRequested) ;
+            while (!cancellationToken.IsCancellationRequested && networkStream.DataAvailable)
             {
-                stringBuilder.Append((char)netstream.ReadByte());
+                stringBuilder.Append((char)networkStream.ReadByte());
             }
 
             return stringBuilder.ToString();
@@ -143,7 +143,7 @@ namespace RS232cTcpSharp
 
         public void Dispose()
         {
-            netstream?.Dispose();
+            networkStream?.Dispose();
         }
 
     }
