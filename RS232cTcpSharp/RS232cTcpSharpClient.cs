@@ -125,6 +125,9 @@ namespace RS232cTcpSharp
 
         private string ReadOutput()
         {
+            if (networkStream == null)
+                return string.Empty;
+
             var stringBuilder = new StringBuilder();
 
             using var cancellationToken = new CancellationTokenSource();
